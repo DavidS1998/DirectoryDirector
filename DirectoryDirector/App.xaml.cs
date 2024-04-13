@@ -1,37 +1,33 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows;
+using Windows.UI.Popups;
+using Microsoft.UI.Xaml;
 
-namespace WpfApp1
+namespace DirectoryDirector
 {
     public partial class App : Application
     {
-        [STAThread]
-        public static void Main(string[] args)
+        public App()
         {
-            // If args is empty, use test args
-            string[] argsToUse = new string[]
-            {
-                "C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\1", 
-                "C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\2"
-            };
-            if (args.Length > 0) { argsToUse = args; }
-            
-            
-            MainWindow mainWindow = new MainWindow(argsToUse);
-            mainWindow.Show();
-
-            
-            App app = new App();
-            app.InitializeComponent();
-            app.Run();
-            
-            
+            InitializeComponent();
         }
+        
+        protected override void OnLaunched(LaunchActivatedEventArgs args)
+        {
+            // The first argument is always the executable path
+            var arguments = Environment.GetCommandLineArgs()[1..];
+            
+            // If args is empty, use test args
+            string[] argsToUse = 
+            {
+                "C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\1"
+            };
+            if (arguments.Length > 0) { argsToUse = arguments; }
+            
+            m_window = new MainWindow(argsToUse);
+            m_window.Activate();
+        }
+
+        private Window m_window;
     }
 }

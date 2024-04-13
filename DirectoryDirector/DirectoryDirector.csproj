@@ -2,16 +2,16 @@
 
     <PropertyGroup>
         <OutputType>WinExe</OutputType>
-        <TargetFramework>net7.0-windows</TargetFramework>
-        <Nullable>enable</Nullable>
-        <UseWPF>true</UseWPF>
-        <RootNamespace>WpfApp1</RootNamespace>
+        <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
+        <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+        <Platforms>x86;x64;ARM64</Platforms>
+        <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+        <UseWinUI>true</UseWinUI>
+        <EnableMsixTooling>true</EnableMsixTooling>
+        <WindowsPackageType>None</WindowsPackageType>
+        <Nullable>warnings</Nullable>
+        <LangVersion>11</LangVersion>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ApplicationDefinition Remove="App.xaml" />
-      <Page Include="App.xaml" />
-    </ItemGroup>
 
     <ItemGroup>
       <Folder Include="CachedIcons\" />
@@ -70,6 +70,11 @@
       <Content Include="CachedIcons\14.ico">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.WindowsAppSDK" Version="1.5.240404000" />
+      <PackageReference Include="Vanara.PInvoke.Shell32" Version="3.4.8" />
     </ItemGroup>
 
 </Project>

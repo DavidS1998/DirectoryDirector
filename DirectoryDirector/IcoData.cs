@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-namespace WpfApp1;
+namespace DirectoryDirector;
 
 public class IcoData
 {
@@ -15,6 +15,7 @@ public class IcoData
     {
         // Find all .ico files in the CachedIcons folder, extract paths
         string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
+        // TODO: Handle case where CachedIcons folder does not exist
 
         // Find all .ico files in the CachedIcons folder and extract paths
         string[] icoPaths = Directory.GetFiles(basePath, "*.ico");
