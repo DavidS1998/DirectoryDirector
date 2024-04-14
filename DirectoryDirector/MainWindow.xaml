@@ -6,7 +6,7 @@
         xmlns:directoryDirector="using:DirectoryDirector"
         mc:Ignorable="d"
         Title="Change Folder Icon">
-    <Grid Background="Black">
+    <Grid x:Name="MainGrid" Background="Black">
         <Grid.DataContext>
             <directoryDirector:IcoData />
         </Grid.DataContext>
@@ -27,26 +27,56 @@
         
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             
-            <ItemsControl Margin="10" x:Name="DataGrid" ItemsSource="{Binding IcoDataList }">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <WrapGrid Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"></WrapGrid>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Height="170" Width="150" Margin="5"
-                                    Background="Black" CornerRadius="8"
-                                    Tapped="FolderButton_OnMouseLeftButtonDown"
-                                    PointerEntered="StackPanel_PointerEntered"
-                                    PointerExited="StackPanel_PointerExited">
-                            <Image Source="{Binding [0]}" Margin="4 0 4 0" />
-                            <TextBlock Text="{Binding [1]}" HorizontalAlignment="Center" Foreground="White" Margin="0 -8 0 0" />
-                        </StackPanel>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!--<RowDefinition Height="48"/>-->
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                
+                <ItemsControl Grid.Row="0" Margin="10" x:Name="FavoriteGrid" ItemsSource="{Binding FavoriteList }">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"></WrapGrid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Height="170" Width="150" Margin="5"
+                                        HorizontalAlignment="Left"
+                                        Background="Black" CornerRadius="8"
+                                        Tapped="FolderButton_OnMouseLeftButtonDown"
+                                        PointerEntered="StackPanel_PointerEntered"
+                                        PointerExited="StackPanel_PointerExited">
+                                <Image Source="{Binding [0]}" Margin="4 0 4 0" />
+                                <TextBlock Text="{Binding [1]}" HorizontalAlignment="Center" Foreground="White" Margin="0 -8 0 0" />
+                            </StackPanel>
 
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                
+                <ItemsControl Grid.Row="1" Margin="10" x:Name="DataGrid" ItemsSource="{Binding IcoDataList }">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapGrid Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center"></WrapGrid>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Height="170" Width="150" Margin="5"
+                                        Background="Black" CornerRadius="8"
+                                        Tapped="FolderButton_OnMouseLeftButtonDown"
+                                        PointerEntered="StackPanel_PointerEntered"
+                                        PointerExited="StackPanel_PointerExited">
+                                <Image Source="{Binding [0]}" Margin="4 0 4 0" />
+                                <TextBlock Text="{Binding [1]}" HorizontalAlignment="Center" Foreground="White" Margin="0 -8 0 0" />
+                            </StackPanel>
+
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </Grid>
 
         </ScrollViewer>
     </Grid>
