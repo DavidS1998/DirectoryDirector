@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:directoryDirector="using:DirectoryDirector"
         mc:Ignorable="d"
+        Closed="MainWindow_OnClosed"
         Title="Change Folder Icon">
     <Grid x:Name="MainGrid" Background="Black">
         <Grid.DataContext>

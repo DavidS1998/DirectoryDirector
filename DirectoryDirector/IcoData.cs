@@ -16,11 +16,10 @@ public class IcoData
 
     public IcoData()
     {
+        // TODO: Handle case where CachedIcons folder does not exist
+        
         // Find all .ico files in the CachedIcons folder, extract paths
         string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
-        // TODO: Handle case where CachedIcons folder does not exist
-
-        // Find all .ico files in the CachedIcons folder and extract paths
         string[] icoPaths = Directory.GetFiles(basePath, "*.ico");
 
         // Create a list of icon data, each containing the path and name
