@@ -63,10 +63,22 @@ namespace DirectoryDirector
                 {
                     // Triggers for system folders
                     // Show a message box with the error
+                    // TODO: Actually show the message box
                     MessageDialog messageDialog = new MessageDialog("Error: " + e.Message);
+                    messageDialog.ShowAsync();
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(icoPath));
+            }
+        }
+
+        private void RevertIcoFile()
+        {
+            // Repeat for all selected folders
+            foreach (string folderPath in _folderList)
+            {
+                CleanIcoFiles(folderPath);
+                UpdateDesktopIni(folderPath, "");
             }
         }
 
@@ -151,19 +163,25 @@ namespace DirectoryDirector
             return null;
         }
         
-        // Decides whether to use a cached icon or open the file picker for a custom one
+        // Decides what to do when a folder button is clicked
         private void GridClickHandler(string clickedTile)
         {
-            if (clickedTile == "Add…")
+            switch (clickedTile)
             {
-                OpenFilePicker();
-            }
-            else
-            {
-                string path = clickedTile;
-                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
-                                    ?? throw new InvalidOperationException(), "CachedIcons", path);
-                CopyIcoFile(path);
+                case "Add…":
+                    OpenFilePicker();
+                    break;
+                case "Revert":
+                    RevertIcoFile();
+                    break;
+                default:
+                {
+                    string path = clickedTile;
+                    path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                        ?? throw new InvalidOperationException(), "CachedIcons", path);
+                    CopyIcoFile(path);
+                    break;
+                }
             }
         }
 

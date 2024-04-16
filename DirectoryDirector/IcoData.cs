@@ -31,6 +31,7 @@ public class IcoData
         FavoriteList = new ObservableCollection<string[]>();
         string assetsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "Assets");
         FavoriteList.Insert(0, new[] { Path.Combine(assetsPath, "Add.svg"), "Add…" });
+        FavoriteList.Insert(1, new[] { Path.Combine(assetsPath, "Revert.svg"), "Revert" });
     }
     
     public void AddCustomIco(string icoPath)
