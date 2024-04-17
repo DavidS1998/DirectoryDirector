@@ -13,7 +13,7 @@
         </Grid.DataContext>
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
-            <!--<RowDefinition Height="48"/>-->
+            <RowDefinition Height="48"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         
@@ -26,7 +26,17 @@
                        Margin="28,0,0,0" />
         </Grid>
         
-        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+        <!--Info bar-->
+        <Grid Row="1" Height="48" VerticalAlignment="Top" Background="Transparent" Name="InfoBar">
+            
+            <CommandBar HorizontalAlignment="Center" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right">
+                <AppBarButton Icon="Accept" Label="Close after applying icon" IsEnabled="True" Name="CloseApplyButton" Click="CloseApplyButton_OnClick"/>
+                <AppBarButton Icon="Cancel" Label="Apply to all subfolders" IsEnabled="True" Name="SubfoldersButton"/>
+            </CommandBar>
+        </Grid>
+        
+        <!--Content-->
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             
             <Grid>
                 <Grid.RowDefinitions>

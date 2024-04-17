@@ -42,6 +42,12 @@ namespace DirectoryDirector
             
             // Restore AppWindow's size and position
             AppWindow.MoveAndResize(_settingsHandler.SizeAndPosition);
+            
+            // Restore settings
+            if (_settingsHandler.CloseOnApply)
+            { CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept); } 
+            else
+            { CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel); }
         }
 
         private void UpdateSelectedFolders(string[] folderList)
@@ -84,6 +90,12 @@ namespace DirectoryDirector
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
+                
+                // Close the window if CloseOnApply is enabled
+                if (_settingsHandler.CloseOnApply)
+                {
+                    Close();
+                }
             }
         }
 
@@ -178,6 +190,13 @@ namespace DirectoryDirector
             return null;
         }
         
+        // Close application
+        private void Close()
+        {
+            //MainWindow_OnClosed();
+            Application.Current.Exit();
+        }
+        
         // Decides what to do when a folder button is clicked
         private void GridClickHandler(string clickedTile)
         {
@@ -237,6 +256,23 @@ namespace DirectoryDirector
             var position = AppWindow.Position;
             RectInt32 rect = new RectInt32((int)position.X, (int)position.Y, (int)size.Width, (int)size.Height);
             _settingsHandler.SizeAndPosition = rect;
+        }
+        
+        // AppBar button to toggle close on apply
+        private void CloseApplyButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_settingsHandler.CloseOnApply)
+            {
+                // Disable
+                CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel);
+                _settingsHandler.CloseOnApply = false;
+            }
+            else
+            {
+                // Enable
+                CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept);
+                _settingsHandler.CloseOnApply = true;
+            }
         }
     }
 }

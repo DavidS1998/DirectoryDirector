@@ -19,57 +19,18 @@
 
     <ItemGroup>
       <None Remove="CachedIcons\01.ico" />
-      <Content Include="CachedIcons\01.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\02.ico" />
-      <Content Include="CachedIcons\02.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\03.ico" />
-      <Content Include="CachedIcons\03.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\04.ico" />
-      <Content Include="CachedIcons\04.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\05.ico" />
-      <Content Include="CachedIcons\05.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\06.ico" />
-      <Content Include="CachedIcons\06.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\07.ico" />
-      <Content Include="CachedIcons\07.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\09.ico" />
-      <Content Include="CachedIcons\09.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\10.ico" />
-      <Content Include="CachedIcons\10.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\11.ico" />
-      <Content Include="CachedIcons\11.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\12.ico" />
-      <Content Include="CachedIcons\12.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\13.ico" />
-      <Content Include="CachedIcons\13.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Remove="CachedIcons\14.ico" />
-      <Content Include="CachedIcons\14.ico">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </Content>
       <None Update="appsettings.json">
         <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       </None>

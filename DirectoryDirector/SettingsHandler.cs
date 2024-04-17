@@ -22,6 +22,13 @@ public class SettingsHandler
         get { DeserializeSettings(); return _sizeAndPosition; }
         set { _sizeAndPosition = value; SerializeSettings(); }
     }
+
+    private bool _closeOnApply;
+    public bool CloseOnApply { 
+        get { DeserializeSettings(); return _closeOnApply; } 
+        set { _closeOnApply = value; SerializeSettings(); }
+    }
+    public bool ApplyToSubfolders { get; set; }
     
     // Data for serialization
     public class SettingsRoot
@@ -30,6 +37,7 @@ public class SettingsHandler
         public int SizeX { get; set; }
         public int PositionX { get; set; }
         public int PositionY { get; set; }
+        public bool CloseOnApply { get; set; }
     }
     
     // Serialize to JSON
@@ -41,7 +49,8 @@ public class SettingsHandler
             { "SizeY", _sizeAndPosition.Height },
             { "SizeX", _sizeAndPosition.Width },
             { "PositionX", _sizeAndPosition.X },
-            { "PositionY", _sizeAndPosition.Y }
+            { "PositionY", _sizeAndPosition.Y },
+            { "CloseOnApply", _closeOnApply }
         };
         
         var options = new JsonSerializerOptions { WriteIndented = true };
@@ -67,6 +76,7 @@ public class SettingsHandler
             X = rootObject.PositionX,
             Y = rootObject.PositionY
         };
+        _closeOnApply = rootObject.CloseOnApply;
         
     }
 }
