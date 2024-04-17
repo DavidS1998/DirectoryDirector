@@ -32,9 +32,9 @@ namespace DirectoryDirector
         public MainWindow(string[] folderList)
         {
             // Initialization
-            _folderList = folderList;
-            _settingsHandler = new SettingsHandler();
             InitializeComponent();
+            UpdateSelectedFolders(folderList);
+            _settingsHandler = new SettingsHandler();
             
             // Hide default title bar.
             ExtendsContentIntoTitleBar = true;
@@ -42,6 +42,18 @@ namespace DirectoryDirector
             
             // Restore AppWindow's size and position
             AppWindow.MoveAndResize(_settingsHandler.SizeAndPosition);
+        }
+
+        private void UpdateSelectedFolders(string[] folderList)
+        {
+            _folderList = folderList;
+
+            // Format the title to display the base path and all selected folders
+            string basePath = Path.GetDirectoryName(folderList[0]);
+            string allNames = "";
+            foreach (string folder in folderList)
+            { allNames += Path.GetFileName(folder) + ", "; }
+            AppTitleTextBlock.Text = "Directory Director - " + basePath + "\\ (" + allNames.TrimEnd(',', ' ') + ")";
         }
         
         // Copies icon from path to selected folders
@@ -51,24 +63,27 @@ namespace DirectoryDirector
             foreach (string folderPath in _folderList)
             {
                 CleanIcoFiles(folderPath);
-                string pathOfCopy = Path.Combine(folderPath, Path.GetFileName(icoPath));
-                
+                // Randomize to prevent name conflicts
+                string randomName = Path.GetRandomFileName().Replace(".", "") + ".ico";
+                string randomNewName = Path.Combine(folderPath, randomName);
+                //string pathOfCopy = Path.Combine(folderPath, Path.GetFileName(icoPath));
+
                 try
                 {
-                    File.Copy(icoPath, pathOfCopy, false);
-                    Debug.WriteLine("Folder button clicked");
-                    File.SetAttributes(pathOfCopy, File.GetAttributes(pathOfCopy) | FileAttributes.Hidden);
+                    File.Copy(icoPath, randomNewName, false);
+                    File.SetAttributes(randomNewName, File.GetAttributes(randomNewName) | FileAttributes.Hidden);
                 }
                 catch (Exception e)
                 {
                     // Triggers for system folders
                     // Show a message box with the error
                     // TODO: Actually show the message box
+                    Debug.WriteLine(e);
                     MessageDialog messageDialog = new MessageDialog("Error: " + e.Message);
-                    messageDialog.ShowAsync();
+                    messageDialog.ShowAsync(); // Needs await?
                     continue;
                 }
-                UpdateDesktopIni(folderPath, Path.GetFileName(icoPath));
+                UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
             }
         }
 
