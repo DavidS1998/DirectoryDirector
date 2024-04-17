@@ -31,7 +31,7 @@
             
             <CommandBar HorizontalAlignment="Center" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right">
                 <AppBarButton Icon="Accept" Label="Close after applying icon" IsEnabled="True" Name="CloseApplyButton" Click="CloseApplyButton_OnClick"/>
-                <AppBarButton Icon="Cancel" Label="Apply to all subfolders" IsEnabled="True" Name="SubfoldersButton"/>
+                <AppBarButton Icon="Cancel" Label="Apply icon to all subfolders" IsEnabled="True" Name="SubfoldersButton" Click="SubfoldersButton_OnClick"/>
             </CommandBar>
         </Grid>
         

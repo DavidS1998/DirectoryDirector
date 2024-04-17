@@ -65,8 +65,17 @@ namespace DirectoryDirector
         // Copies icon from path to selected folders
         private void CopyIcoFile(string icoPath)
         {
+            // If set, queue up all subfolders for folder icon change 
+            string[] tempFolderList = _folderList;
+            if (_settingsHandler.ApplyToSubfolders)
+            {
+                tempFolderList = tempFolderList.Concat(
+                    tempFolderList.SelectMany(folderPath => Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories))
+                ).ToArray();
+            }
+            
             // Repeat for all selected folders
-            foreach (string folderPath in _folderList)
+            foreach (string folderPath in tempFolderList)
             {
                 CleanIcoFiles(folderPath);
                 // Randomize to prevent name conflicts
@@ -90,12 +99,12 @@ namespace DirectoryDirector
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
-                
-                // Close the window if CloseOnApply is enabled
-                if (_settingsHandler.CloseOnApply)
-                {
-                    Close();
-                }
+            }
+            
+            // Close the window if CloseOnApply is enabled
+            if (_settingsHandler.CloseOnApply)
+            {
+                Close();
             }
         }
 
@@ -272,6 +281,22 @@ namespace DirectoryDirector
                 // Enable
                 CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept);
                 _settingsHandler.CloseOnApply = true;
+            }
+        }
+
+        private void SubfoldersButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_settingsHandler.ApplyToSubfolders)
+            {
+                // Disable
+                SubfoldersButton.Icon = new SymbolIcon(Symbol.Cancel);
+                _settingsHandler.ApplyToSubfolders = false;
+            }
+            else
+            {
+                // Enable
+                SubfoldersButton.Icon = new SymbolIcon(Symbol.Accept);
+                _settingsHandler.ApplyToSubfolders = true;
             }
         }
     }

@@ -20,7 +20,8 @@ namespace DirectoryDirector
             // If args is empty, use test args
             string[] argsToUse = 
             {
-                "C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\1"
+                //"C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\1"
+                "C:\\Users\\xofas\\Downloads\\TestFolder Thesis\\Nesting"
             };
             if (arguments.Length > 0) { argsToUse = arguments; }
             
