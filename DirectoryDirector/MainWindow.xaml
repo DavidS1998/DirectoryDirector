@@ -77,6 +77,7 @@
                         <DataTemplate>
                             <StackPanel Height="170" Width="150" Margin="5"
                                         Background="Black" CornerRadius="8"
+                                        ToolTipService.ToolTip="Right click to toggle favorite"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
                                         PointerEntered="StackPanel_PointerEntered"
                                         PointerExited="StackPanel_PointerExited">

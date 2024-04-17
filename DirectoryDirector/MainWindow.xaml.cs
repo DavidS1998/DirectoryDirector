@@ -115,6 +115,11 @@ namespace DirectoryDirector
             {
                 CleanIcoFiles(folderPath);
                 UpdateDesktopIni(folderPath, "");
+                
+                if (_settingsHandler.CloseOnApply)
+                {
+                    Close();
+                }
             }
         }
 
@@ -202,7 +207,6 @@ namespace DirectoryDirector
         // Close application
         private void Close()
         {
-            //MainWindow_OnClosed();
             Application.Current.Exit();
         }
         
