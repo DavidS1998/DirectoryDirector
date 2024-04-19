@@ -1,20 +1,13 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using Windows.Graphics;
-using Windows.UI.Popups;
 
 namespace DirectoryDirector;
 
 public class SettingsHandler
 {
-    // Size and position✅
-    // Close on apply toggle
-    // Favorited icons
-    
-    
     // Saves window state between sessions
     private RectInt32 _sizeAndPosition;
     public RectInt32 SizeAndPosition
@@ -28,6 +21,14 @@ public class SettingsHandler
         get { DeserializeSettings(); return _closeOnApply; } 
         set { _closeOnApply = value; SerializeSettings(); }
     }
+
+    private bool _queueFolders;
+    public bool QueueFolders
+    {
+        get { DeserializeSettings(); return _queueFolders; }
+        set { _queueFolders = value; SerializeSettings(); }
+    }
+    
     public bool ApplyToSubfolders { get; set; }
 
     private List<string> _favoriteFolders;
@@ -46,6 +47,7 @@ public class SettingsHandler
         public int PositionX { get; set; }
         public int PositionY { get; set; }
         public bool CloseOnApply { get; set; }
+        public bool QueueFolders { get; set; }
         public List<string> FavoriteFolders { get; set; } = new();
     }
     
@@ -60,6 +62,7 @@ public class SettingsHandler
             { "PositionX", _sizeAndPosition.X },
             { "PositionY", _sizeAndPosition.Y },
             { "CloseOnApply", _closeOnApply },
+            { "QueueFolders", _queueFolders },
             { "FavoriteFolders", _favoriteFolders }
         };
         
@@ -87,6 +90,7 @@ public class SettingsHandler
             Y = rootObject.PositionY
         };
         _closeOnApply = rootObject.CloseOnApply;
+        _queueFolders = rootObject.QueueFolders;
         _favoriteFolders = rootObject.FavoriteFolders;
     }
 }

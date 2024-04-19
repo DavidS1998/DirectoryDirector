@@ -35,8 +35,8 @@ namespace DirectoryDirector
         {
             // Initialization
             InitializeComponent();
-            UpdateSelectedFolders(folderList);
             _settingsHandler = new SettingsHandler();
+            UpdateSelectedFolders(folderList);
             
             // Hide default title bar.
             ExtendsContentIntoTitleBar = true;
@@ -50,6 +50,10 @@ namespace DirectoryDirector
             { CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept); } 
             else
             { CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel); }
+            if (_settingsHandler.QueueFolders)
+            { QueueButton.Icon = new SymbolIcon(Symbol.Accept); }
+            else
+            { QueueButton.Icon = new SymbolIcon(Symbol.Cancel); }
             
             if (MainGrid.DataContext is not IcoData icoData) return;
             icoData.UpdateFavorites(_settingsHandler.FavoriteFolders);
@@ -61,17 +65,33 @@ namespace DirectoryDirector
 
             // Format the title to display the base path and all selected folders
             string basePath = Path.GetDirectoryName(folderList[0]);
-            string allNames = "";
-            foreach (string folder in folderList)
-            { allNames += Path.GetFileName(folder) + ", "; }
-            
-            
-            //AppTitleTextBlock.Text = "Directory Director - " + basePath + "\\ (" + allNames.TrimEnd(',', ' ') + ")";
+            //string allNames = "";
+            //foreach (string folder in folderList)
+            //{ allNames += Path.GetFileName(folder) + ", "; }
+
             AppTitleTextBlock.Inlines.Clear();
             AppTitleTextBlock.Inlines.Add(new Run { Text = "Directory Director" });
             AppTitleTextBlock.Inlines.Add(new Run { Text = " - " + basePath + ": ", Foreground = new SolidColorBrush(Colors.Gray)});
-            AppTitleTextBlock.Inlines.Add(new Run { Text = allNames.TrimEnd(',', ' '), Foreground = new SolidColorBrush(Colors.White) });
-
+            
+            if (_settingsHandler.QueueFolders)
+            {
+                // Display the name of the first folder in the queue as green
+                AppTitleTextBlock.Inlines.Add(new Run { Text = "Next in queue: " + Path.GetFileName(folderList[0]), Foreground = new SolidColorBrush(Colors.LimeGreen) });
+                for (int i = 1; i < folderList.Length; i++)
+                {
+                    AppTitleTextBlock.Inlines.Add(new Run { Text = ", " + Path.GetFileName(folderList[i]), Foreground = new SolidColorBrush(Colors.White) });
+                }
+            }
+            else
+            {
+                // Standard display
+                string allNames = "";
+                foreach (string folder in folderList)
+                {
+                    allNames += Path.GetFileName(folder) + ", ";
+                }
+                AppTitleTextBlock.Inlines.Add(new Run { Text = allNames.TrimEnd(',', ' '), Foreground = new SolidColorBrush(Colors.White) });
+            }
         }
         
         // Copies icon from path to selected folders
@@ -93,7 +113,6 @@ namespace DirectoryDirector
                 // Randomize to prevent name conflicts
                 string randomName = Path.GetRandomFileName().Replace(".", "") + ".ico";
                 string randomNewName = Path.Combine(folderPath, randomName);
-                //string pathOfCopy = Path.Combine(folderPath, Path.GetFileName(icoPath));
 
                 try
                 {
@@ -112,6 +131,27 @@ namespace DirectoryDirector
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
+
+                // Queue mode
+                // If last in queue, turn off queue mode, and close if CloseOnApply is enabled
+                if (_settingsHandler.QueueFolders && _folderList.Length == 1)
+                {
+                    UpdateSelectedFolders(_folderList);
+                    QueueButton_OnClickButton_OnClick(null, null);
+                    if (_settingsHandler.CloseOnApply)
+                    {
+                        CloseApp();
+                    }
+                    return;
+                }
+
+                // Remove the folder from the list
+                if (_settingsHandler.QueueFolders)
+                {
+                    _folderList = _folderList.Where(folder => folder != folderPath).ToArray();
+                    UpdateSelectedFolders(_folderList);
+                    return;
+                }
             }
             
             // Close the window if CloseOnApply is enabled
@@ -339,6 +379,23 @@ namespace DirectoryDirector
                 SubfoldersButton.Icon = new SymbolIcon(Symbol.Accept);
                 _settingsHandler.ApplyToSubfolders = true;
             }
+        }
+        
+        private void QueueButton_OnClickButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (_settingsHandler.QueueFolders)
+            {
+                // Disable
+                QueueButton.Icon = new SymbolIcon(Symbol.Cancel);
+                _settingsHandler.QueueFolders = false;
+            }
+            else
+            {
+                // Enable
+                QueueButton.Icon = new SymbolIcon(Symbol.Accept);
+                _settingsHandler.QueueFolders = true;
+            }
+            UpdateSelectedFolders(_folderList);
         }
 
         // UI to display when dragging over window
