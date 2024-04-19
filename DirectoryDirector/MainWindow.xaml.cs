@@ -47,13 +47,24 @@ namespace DirectoryDirector
             
             // Restore settings
             if (_settingsHandler.CloseOnApply)
-            { CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept); } 
+            {
+                CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept);
+            }
             else
-            { CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel); }
+            {
+                CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel);
+            }
+
             if (_settingsHandler.QueueFolders)
-            { QueueButton.Icon = new SymbolIcon(Symbol.Accept); }
+            {
+                QueueButton.Icon = new SymbolIcon(Symbol.Accept);
+                SubfoldersButton.IsEnabled = false;
+            }
             else
-            { QueueButton.Icon = new SymbolIcon(Symbol.Cancel); }
+            {
+                QueueButton.Icon = new SymbolIcon(Symbol.Cancel);
+                SubfoldersButton.IsEnabled = true;
+            }
             
             if (MainGrid.DataContext is not IcoData icoData) return;
             icoData.UpdateFavorites(_settingsHandler.FavoriteFolders);
@@ -387,12 +398,14 @@ namespace DirectoryDirector
             {
                 // Disable
                 QueueButton.Icon = new SymbolIcon(Symbol.Cancel);
+                SubfoldersButton.IsEnabled = true;
                 _settingsHandler.QueueFolders = false;
             }
             else
             {
                 // Enable
                 QueueButton.Icon = new SymbolIcon(Symbol.Accept);
+                SubfoldersButton.IsEnabled = false;
                 _settingsHandler.QueueFolders = true;
             }
             UpdateSelectedFolders(_folderList);
