@@ -29,6 +29,14 @@ public class SettingsHandler
         set { _closeOnApply = value; SerializeSettings(); }
     }
     public bool ApplyToSubfolders { get; set; }
+
+    private List<string> _favoriteFolders;
+    public List<string> FavoriteFolders
+    {
+        get { DeserializeSettings(); return _favoriteFolders; } 
+        set { _favoriteFolders = value; SerializeSettings(); }
+    }
+
     
     // Data for serialization
     public class SettingsRoot
@@ -38,6 +46,7 @@ public class SettingsHandler
         public int PositionX { get; set; }
         public int PositionY { get; set; }
         public bool CloseOnApply { get; set; }
+        public List<string> FavoriteFolders { get; set; } = new();
     }
     
     // Serialize to JSON
@@ -50,7 +59,8 @@ public class SettingsHandler
             { "SizeX", _sizeAndPosition.Width },
             { "PositionX", _sizeAndPosition.X },
             { "PositionY", _sizeAndPosition.Y },
-            { "CloseOnApply", _closeOnApply }
+            { "CloseOnApply", _closeOnApply },
+            { "FavoriteFolders", _favoriteFolders }
         };
         
         var options = new JsonSerializerOptions { WriteIndented = true };
@@ -77,6 +87,6 @@ public class SettingsHandler
             Y = rootObject.PositionY
         };
         _closeOnApply = rootObject.CloseOnApply;
-        
+        _favoriteFolders = rootObject.FavoriteFolders;
     }
 }

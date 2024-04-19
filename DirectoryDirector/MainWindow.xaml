@@ -57,6 +57,7 @@
                                         HorizontalAlignment="Left"
                                         Background="Black" CornerRadius="8"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
+                                        RightTapped="FolderButton_OnRightTapped"
                                         PointerEntered="StackPanel_PointerEntered"
                                         PointerExited="StackPanel_PointerExited">
                                 <Image Source="{Binding [0]}" Margin="4 0 4 0" />
@@ -79,6 +80,7 @@
                                         Background="Black" CornerRadius="8"
                                         ToolTipService.ToolTip="Right click to toggle favorite"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
+                                        RightTapped="FolderButton_OnRightTapped"
                                         PointerEntered="StackPanel_PointerEntered"
                                         PointerExited="StackPanel_PointerExited">
                                 <Image Source="{Binding [0]}" Margin="4 0 4 0" />

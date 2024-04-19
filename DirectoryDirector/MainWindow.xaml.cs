@@ -13,6 +13,7 @@ using Windows.UI.Popups;
 using Microsoft.UI;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Vanara.PInvoke;
@@ -49,6 +50,9 @@ namespace DirectoryDirector
             { CloseApplyButton.Icon = new SymbolIcon(Symbol.Accept); } 
             else
             { CloseApplyButton.Icon = new SymbolIcon(Symbol.Cancel); }
+            
+            if (MainGrid.DataContext is not IcoData icoData) return;
+            icoData.UpdateFavorites(_settingsHandler.FavoriteFolders);
         }
 
         private void UpdateSelectedFolders(string[] folderList)
@@ -60,7 +64,14 @@ namespace DirectoryDirector
             string allNames = "";
             foreach (string folder in folderList)
             { allNames += Path.GetFileName(folder) + ", "; }
-            AppTitleTextBlock.Text = "Directory Director - " + basePath + "\\ (" + allNames.TrimEnd(',', ' ') + ")";
+            
+            
+            //AppTitleTextBlock.Text = "Directory Director - " + basePath + "\\ (" + allNames.TrimEnd(',', ' ') + ")";
+            AppTitleTextBlock.Inlines.Clear();
+            AppTitleTextBlock.Inlines.Add(new Run { Text = "Directory Director" });
+            AppTitleTextBlock.Inlines.Add(new Run { Text = " - " + basePath + ": ", Foreground = new SolidColorBrush(Colors.Gray)});
+            AppTitleTextBlock.Inlines.Add(new Run { Text = allNames.TrimEnd(',', ' '), Foreground = new SolidColorBrush(Colors.White) });
+
         }
         
         // Copies icon from path to selected folders
@@ -95,8 +106,9 @@ namespace DirectoryDirector
                     // Show a message box with the error
                     // TODO: Actually show the message box
                     Debug.WriteLine(e);
+                    /*
                     MessageDialog messageDialog = new MessageDialog("Error: " + e.Message);
-                    messageDialog.ShowAsync(); // Needs await?
+                    messageDialog.ShowAsync(); // Needs await? */
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
@@ -105,7 +117,7 @@ namespace DirectoryDirector
             // Close the window if CloseOnApply is enabled
             if (_settingsHandler.CloseOnApply)
             {
-                Close();
+                CloseApp();
             }
         }
 
@@ -119,7 +131,7 @@ namespace DirectoryDirector
                 
                 if (_settingsHandler.CloseOnApply)
                 {
-                    Close();
+                    CloseApp();
                 }
             }
         }
@@ -206,7 +218,7 @@ namespace DirectoryDirector
         }
         
         // Close application
-        private void Close()
+        private void CloseApp()
         {
             Application.Current.Exit();
         }
@@ -216,7 +228,7 @@ namespace DirectoryDirector
         {
             switch (clickedTile)
             {
-                case "Add…":
+                case "Select…":
                     OpenFilePicker();
                     break;
                 case "Revert":
@@ -242,6 +254,30 @@ namespace DirectoryDirector
             string clickedTile = textBlock.Text;
             
             GridClickHandler(clickedTile);
+        }
+        
+        private void FolderButton_OnRightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            // Find which icon was clicked
+            StackPanel stackPanel = (StackPanel)sender;
+            TextBlock textBlock = (TextBlock)stackPanel.Children[1];
+            string clickedTile = textBlock.Text;
+            if (MainGrid.DataContext is not IcoData icoData) return;
+            if (clickedTile == "Select…" || clickedTile == "Revert") return;
+            
+            // Add to favorites if it doesn't exist, remove if it does
+            if (_settingsHandler.FavoriteFolders.Contains(clickedTile))
+            {
+                Debug.WriteLine("Removing " + clickedTile);
+                _settingsHandler.FavoriteFolders = _settingsHandler.FavoriteFolders.Where(folder => folder != clickedTile).ToList();
+                icoData.UpdateFavorites(_settingsHandler.FavoriteFolders);
+            }
+            else
+            {
+                Debug.WriteLine("Adding " + clickedTile);
+                _settingsHandler.FavoriteFolders = _settingsHandler.FavoriteFolders.Append(clickedTile).ToList();
+                icoData.UpdateFavorites(_settingsHandler.FavoriteFolders);
+            }
         }
         
         // Hover enter animation

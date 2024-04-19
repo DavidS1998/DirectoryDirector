@@ -11,46 +11,63 @@ namespace DirectoryDirector;
 
 public class IcoData
 {
-    public ObservableCollection<string[]> IcoDataList { get; }
-    public ObservableCollection<string[]> FavoriteList { get; }
+    public ObservableCollection<string[]> IcoDataList { get; set; }
+    public ObservableCollection<string[]> FavoriteList { get; set; }
+    
+    // TODO: Handle case where CachedIcons folder does not exist
 
     public IcoData()
     {
-        // TODO: Handle case where CachedIcons folder does not exist
-        
-        // Find all .ico files in the CachedIcons folder, extract paths
-        string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
-        string[] icoPaths = Directory.GetFiles(basePath, "*.ico");
-
-        // Create a list of icon data, each containing the path and name
         IcoDataList = new ObservableCollection<string[]>();
-        foreach (string icoPath in icoPaths)
-        { IcoDataList.Add(new[] { icoPath, Path.GetFileName(icoPath) }); }
-        
-        // Add Assets/Add.svg to start of list
         FavoriteList = new ObservableCollection<string[]>();
-        string assetsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "Assets");
-        FavoriteList.Insert(0, new[] { Path.Combine(assetsPath, "Add.svg"), "Add…" });
-        FavoriteList.Insert(1, new[] { Path.Combine(assetsPath, "Revert.svg"), "Revert" });
+        
+        CreateIcoList();
     }
     
     public void AddCustomIco(string icoPath)
     {
         // Add custom icon to the list
         IcoDataList.Add(new[] { icoPath, Path.GetFileName(icoPath) });
-        PrintIcoData();
     }
-    
-    public void AddFavorite(string[] icoData)
+
+    public void CreateIcoList()
     {
-        FavoriteList.Add(icoData);
-    }
-    
-    public void PrintIcoData()
-    {
-        foreach (string[] icoData in IcoDataList)
+        IcoDataList.Clear();
+        
+        // Find all .ico files in the CachedIcons folder, extract paths
+        string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
+        string[] icoPaths = Directory.GetFiles(basePath, "*.ico");
+
+        // Create a list of icon data, each containing the path and name
+        foreach (string icoPath in icoPaths)
+        { IcoDataList.Add(new[] { icoPath, Path.GetFileName(icoPath) }); }
+        
+        // Remove any entries also in the favorites list / Okay default behavior?
+        foreach (string[] favorite in FavoriteList)
         {
-            Debug.WriteLine(icoData[0] + " " + icoData[1]);
+            if (IcoDataList.Any(x => x[0] == favorite[0]))
+            {
+                IcoDataList.Remove(IcoDataList.First(x => x[0] == favorite[0]));
+            }
         }
+    }
+    
+    public void UpdateFavorites(List<string> cachedIconName)
+    {
+        FavoriteList.Clear();
+        
+        // Default options
+        string assetsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "Assets");
+        FavoriteList.Add(new[] { Path.Combine(assetsPath, "Add.svg"), "Select…" });
+        FavoriteList.Add(new[] { Path.Combine(assetsPath, "Revert.svg"), "Revert" });
+        
+        string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
+        foreach (string icoPath in cachedIconName)
+        {
+            FavoriteList.Add(new[] { basePath + "\\" + icoPath, Path.GetFileName(icoPath) });
+        }
+        
+        // Refresh main list to remove duplicates
+        CreateIcoList();
     }
 }
