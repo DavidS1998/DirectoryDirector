@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Closed="MainWindow_OnClosed"
         Title="Change Folder Icon">
-    <Grid x:Name="MainGrid" Background="Black">
+    <Grid x:Name="MainGrid" Background="Black" DragOver="MainGrid_OnDragOver" Drop="MainGrid_OnDrop" AllowDrop="True">
         <Grid.DataContext>
             <directoryDirector:IcoData />
         </Grid.DataContext>

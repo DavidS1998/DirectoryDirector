@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 using Windows.Storage;
 using Windows.UI;
@@ -302,6 +303,25 @@ namespace DirectoryDirector
                 SubfoldersButton.Icon = new SymbolIcon(Symbol.Accept);
                 _settingsHandler.ApplyToSubfolders = true;
             }
+        }
+
+        // UI to display when dragging over window
+        private void MainGrid_OnDragOver(object sender, DragEventArgs e)
+        {
+            e.AcceptedOperation = DataPackageOperation.Link;
+        }
+
+        // Drag and drop to change context
+        private async void MainGrid_OnDrop(object sender, DragEventArgs e)
+        {
+            if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+            var items = await e.DataView.GetStorageItemsAsync();
+            string[] folderList = items.Select(item => item.Path)
+                .Where(Directory.Exists)
+                .ToArray();
+            if (folderList.Length == 0) return;
+
+            UpdateSelectedFolders(folderList);
         }
     }
 }
