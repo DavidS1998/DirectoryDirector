@@ -73,6 +73,8 @@ namespace DirectoryDirector
         private void UpdateSelectedFolders(string[] folderList)
         {
             _folderList = folderList;
+            
+            if (folderList.Length == 0) return;
 
             // Format the title to display the base path and all selected folders
             string basePath = Path.GetDirectoryName(folderList[0]);
@@ -277,6 +279,8 @@ namespace DirectoryDirector
         // Decides what to do when a folder button is clicked
         private void GridClickHandler(string clickedTile)
         {
+            if (_folderList.Length == 0) return;
+            
             switch (clickedTile)
             {
                 case "Select…":
@@ -428,6 +432,14 @@ namespace DirectoryDirector
             if (folderList.Length == 0) return;
 
             UpdateSelectedFolders(folderList);
+        }
+
+        // Open the CachedIcons folder in the File Explorer
+        private void OpenFolderButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            string cachedIconsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                                  ?? throw new InvalidOperationException(), "CachedIcons");
+            Process.Start("explorer.exe", cachedIconsPath);
         }
     }
 }

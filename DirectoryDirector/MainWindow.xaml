@@ -34,6 +34,9 @@
                 <AppBarButton Icon="Cancel" Label="Apply icon to all subfolders" IsEnabled="True" Name="SubfoldersButton" Click="SubfoldersButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Queue up folders" IsEnabled="True" Name="QueueButton" Click="QueueButton_OnClickButton_OnClick"/>
             </CommandBar>
+            <CommandBar HorizontalAlignment="Right" Background="Transparent" DefaultLabelPosition="Right">
+                <AppBarButton Icon="Pictures" Label="Open icon folder" IsEnabled="True" Name="OpenFolderButton" Click="OpenFolderButton_OnClick"/>
+            </CommandBar>
         </Grid>
         
         <!--Content-->
@@ -42,10 +45,10 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <!--<RowDefinition Height="48"/>-->
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 
+                <!--Favorite icons/>-->
                 <ItemsControl Grid.Row="0" Margin="10" x:Name="FavoriteGrid" ItemsSource="{Binding FavoriteList }">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
@@ -69,6 +72,7 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
                 
+                <!--Default icons/>-->
                 <ItemsControl Grid.Row="1" Margin="10" x:Name="DataGrid" ItemsSource="{Binding IcoDataList }">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
