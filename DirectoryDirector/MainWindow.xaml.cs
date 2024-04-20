@@ -73,8 +73,12 @@ namespace DirectoryDirector
         private void UpdateSelectedFolders(string[] folderList)
         {
             _folderList = folderList;
-            
-            if (folderList.Length == 0) return;
+
+            if (folderList.Length == 0)
+            {
+                AppTitleTextBlock.Text = "Directory Director";
+                return;  
+            } 
 
             // Format the title to display the base path and all selected folders
             string basePath = Path.GetDirectoryName(folderList[0]);
@@ -146,23 +150,15 @@ namespace DirectoryDirector
                 UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
 
                 // Queue mode
-                // If last in queue, turn off queue mode, and close if CloseOnApply is enabled
-                if (_settingsHandler.QueueFolders && _folderList.Length == 1)
-                {
-                    UpdateSelectedFolders(_folderList);
-                    QueueButton_OnClickButton_OnClick(null, null);
-                    if (_settingsHandler.CloseOnApply)
-                    {
-                        CloseApp();
-                    }
-                    return;
-                }
-
                 // Remove the folder from the list
                 if (_settingsHandler.QueueFolders)
                 {
                     _folderList = _folderList.Where(folder => folder != folderPath).ToArray();
                     UpdateSelectedFolders(_folderList);
+                    if (_settingsHandler.CloseOnApply && _folderList.Length == 0)
+                    {
+                        CloseApp();
+                    }
                     return;
                 }
             }
