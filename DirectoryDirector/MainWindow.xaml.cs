@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI;
-using Windows.UI.Popups;
 using Microsoft.UI;
+using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
@@ -37,6 +38,13 @@ namespace DirectoryDirector
             InitializeComponent();
             _settingsHandler = new SettingsHandler();
             UpdateSelectedFolders(folderList);
+            
+            // Set app icon
+            IntPtr hWnd = WindowNative.GetWindowHandle(this);
+            WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
+            var appWindow = AppWindow.GetFromWindowId(myWndId);
+            appWindow.SetIcon(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                          ?? throw new InvalidOperationException(), "Assets", "Small.ico"));
             
             // Hide default title bar.
             ExtendsContentIntoTitleBar = true;
@@ -202,7 +210,7 @@ namespace DirectoryDirector
         // Update the desktop.ini file and notify the system
         private void UpdateDesktopIni(string path, string icoName)
         {
-            Shell32.SHFOLDERCUSTOMSETTINGS pfcs = new Shell32.SHFOLDERCUSTOMSETTINGS()
+            Shell32.SHFOLDERCUSTOMSETTINGS pfcs = new Shell32.SHFOLDERCUSTOMSETTINGS
             {
                 dwMask = Shell32.FOLDERCUSTOMSETTINGSMASK.FCSM_ICONFILE,
                 pszIconFile = icoName,
@@ -217,9 +225,9 @@ namespace DirectoryDirector
         private async void OpenFilePicker()
         {
             // Create a new file picker
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            var picker = new FileOpenPicker
             {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+                ViewMode = PickerViewMode.Thumbnail,
                 FileTypeFilter = { ".ico" }
             };
 
@@ -355,7 +363,7 @@ namespace DirectoryDirector
             // Save the size and position to the app's settings
             var size = AppWindow.Size;
             var position = AppWindow.Position;
-            RectInt32 rect = new RectInt32((int)position.X, (int)position.Y, (int)size.Width, (int)size.Height);
+            RectInt32 rect = new RectInt32(position.X, position.Y, size.Width, size.Height);
             _settingsHandler.SizeAndPosition = rect;
         }
         

@@ -11,6 +11,8 @@
         <WindowsPackageType>None</WindowsPackageType>
         <Nullable>warnings</Nullable>
         <LangVersion>11</LangVersion>
+        <ApplicationIcon>Assets\Folder.ico</ApplicationIcon>
+        <PackageIcon>Small.ico</PackageIcon>
     </PropertyGroup>
 
     <ItemGroup>
