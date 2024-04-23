@@ -140,13 +140,13 @@ namespace DirectoryDirector
                 CleanIcoFiles(folderPath);
                 // Randomize to prevent name conflicts
                 string icoName = Path.GetFileName(icoPath);
-                string randomName = "DDirector - " + icoName;
-                string randomNewName = Path.Combine(folderPath, randomName);
+                string prefixedName = "DDirector - " + icoName;
+                string newPathName = Path.Combine(folderPath, prefixedName);
 
                 try
                 {
-                    File.Copy(icoPath, randomNewName, false);
-                    File.SetAttributes(randomNewName, File.GetAttributes(randomNewName) | FileAttributes.Hidden);
+                    File.Copy(icoPath, newPathName, false);
+                    File.SetAttributes(newPathName, File.GetAttributes(newPathName) | FileAttributes.Hidden);
                 }
                 catch (Exception e)
                 {
@@ -159,7 +159,7 @@ namespace DirectoryDirector
                     messageDialog.ShowAsync(); // Needs await? */
                     continue;
                 }
-                UpdateDesktopIni(folderPath, Path.GetFileName(randomName));
+                UpdateDesktopIni(folderPath, Path.GetFileName(prefixedName));
 
                 // Queue mode
                 // Remove the folder from the list
@@ -200,10 +200,11 @@ namespace DirectoryDirector
         // Remove leftover .ico files
         private void CleanIcoFiles(string folderPath)
         {
-            string[] icoPaths = Directory.GetFiles(folderPath, "*.ico", SearchOption.TopDirectoryOnly);
+             string[] icoPaths = Directory.GetFiles(folderPath, "*.ico", SearchOption.TopDirectoryOnly);
             foreach (string icoPath in icoPaths)
             {
                 if ((File.GetAttributes(icoPath) & FileAttributes.Hidden) != FileAttributes.Hidden) continue;
+                if (!Path.GetFileName(icoPath).StartsWith("DDirector - ")) continue;
                 try 
                 { File.Delete(icoPath); }
                 catch (Exception e) 
