@@ -1,3 +1,5 @@
+![06](https://github.com/DavidS1998/DirectoryDirector/assets/32343843/45febecc-be23-406c-a6e3-a9f6403800a8)
+
 ## Installation
 
 Launch the exe, install Windows App SDK from the link if prompted.
