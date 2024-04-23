@@ -139,7 +139,8 @@ namespace DirectoryDirector
             {
                 CleanIcoFiles(folderPath);
                 // Randomize to prevent name conflicts
-                string randomName = Path.GetRandomFileName().Replace(".", "") + ".ico";
+                string icoName = Path.GetFileName(icoPath);
+                string randomName = "DDirector - " + icoName;
                 string randomNewName = Path.Combine(folderPath, randomName);
 
                 try
