@@ -4,8 +4,8 @@
         <OutputType>WinExe</OutputType>
         <TargetFramework>net6.0-windows10.0.19041.0</TargetFramework>
         <TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
-        <Platforms>x86;x64;ARM64</Platforms>
-        <RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+        <Platform>x64</Platform>
+        <RuntimeIdentifiers>win10-x64</RuntimeIdentifiers>
         <UseWinUI>true</UseWinUI>
         <EnableMsixTooling>true</EnableMsixTooling>
         <WindowsPackageType>None</WindowsPackageType>
@@ -13,29 +13,21 @@
         <LangVersion>11</LangVersion>
         <ApplicationIcon>Assets\Folder.ico</ApplicationIcon>
         <PackageIcon>Small.ico</PackageIcon>
+      
+        <SelfContained>True</SelfContained>
+        <DebugType>None</DebugType>
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="CachedIcons\" />
+      <Content Include="Assets\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
+      <Content Include="appsettings.json">
+          <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="CachedIcons\01.ico" />
-      <None Remove="CachedIcons\02.ico" />
-      <None Remove="CachedIcons\03.ico" />
-      <None Remove="CachedIcons\04.ico" />
-      <None Remove="CachedIcons\05.ico" />
-      <None Remove="CachedIcons\06.ico" />
-      <None Remove="CachedIcons\07.ico" />
-      <None Remove="CachedIcons\09.ico" />
-      <None Remove="CachedIcons\10.ico" />
-      <None Remove="CachedIcons\11.ico" />
-      <None Remove="CachedIcons\12.ico" />
-      <None Remove="CachedIcons\13.ico" />
-      <None Remove="CachedIcons\14.ico" />
-      <None Update="appsettings.json">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+        <Content Include="CachedIcons\**" CopyToPublishDirectory="Always" CopyToOutputDirectory="Always"/>
     </ItemGroup>
 
     <ItemGroup>

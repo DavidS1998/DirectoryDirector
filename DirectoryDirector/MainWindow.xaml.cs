@@ -84,7 +84,10 @@ namespace DirectoryDirector
 
             if (folderList.Length == 0)
             {
-                AppTitleTextBlock.Text = "Directory Director";
+                AppTitleTextBlock.Inlines.Clear();
+                AppTitleTextBlock.Inlines.Add(new Run { Text = "Directory Director" });
+                AppTitleTextBlock.Inlines.Add(new Run { Text = " - No folders selected", Foreground = new SolidColorBrush(Colors.Gray)});
+                AppTitleTextBlock.Inlines.Add(new Run { Text = " - Drag and drop folders here", Foreground = new SolidColorBrush(Colors.Yellow)});
                 return;  
             } 
 
