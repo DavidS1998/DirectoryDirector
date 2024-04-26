@@ -37,7 +37,7 @@ namespace DirectoryDirector
         {
             // Initialization
             InitializeComponent();
-            _settingsHandler = new SettingsHandler();
+            _settingsHandler = new SettingsHandler(MainGrid);
             UpdateSelectedFolders(folderList);
             
             // Set app icon
@@ -149,12 +149,14 @@ namespace DirectoryDirector
                 catch (Exception e)
                 {
                     // Triggers for system folders
-                    // Show a message box with the error
-                    // TODO: Actually show the message box
-                    Debug.WriteLine(e);
-                    /*
-                    MessageDialog messageDialog = new MessageDialog("Error: " + e.Message);
-                    messageDialog.ShowAsync(); // Needs await? */
+                    ContentDialog errorDialog = new ContentDialog
+                    {
+                        Title = "Error: Could not update folder icon.",
+                        Content = "The selected folder may be a system folder.\n\n" + e.Message,
+                        CloseButtonText = "Close",
+                        XamlRoot = MainGrid.XamlRoot
+                    };
+                    errorDialog.ShowAsync().AsTask();
                     continue;
                 }
                 UpdateDesktopIni(folderPath, Path.GetFileName(prefixedName));

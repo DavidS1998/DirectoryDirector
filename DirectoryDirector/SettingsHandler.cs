@@ -4,6 +4,7 @@ using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using Windows.Graphics;
+using Microsoft.UI.Xaml.Controls;
 
 namespace DirectoryDirector;
 
@@ -38,6 +39,14 @@ public class SettingsHandler
         get { DeserializeSettings(); return _favoriteFolders; } 
         set { _favoriteFolders = value; SerializeSettings(); }
     }
+    
+    // Used for error messages
+    public Grid MainGrid { get; set; }
+    
+    public SettingsHandler(Grid grid)
+    {
+        MainGrid = grid;
+    }
 
     
     // Data for serialization
@@ -69,35 +78,80 @@ public class SettingsHandler
         
         var options = new JsonSerializerOptions { WriteIndented = true };
         var json = JsonSerializer.Serialize(dictionary, options);
-        string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "appsettings.json");
-        File.WriteAllText(settingsPath, json);
+        try
+        {
+            string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "appsettings.json");
+            File.WriteAllText(settingsPath, json);
+        }
+        catch (Exception e)
+        {
+            ContentDialog errorDialog = new ContentDialog
+            {
+                Title = "Error: appsettings.json could either not be accessed or found. Settings will not be saved between sessions.",
+                Content = "Is this application placed in a system directory? \n\n" + e.Message,
+                CloseButtonText = "Close"
+            };
+            errorDialog.XamlRoot = MainGrid.XamlRoot;
+            errorDialog.ShowAsync().AsTask();
+        }
     }
     
     // Deserialize from JSON
     private void DeserializeSettings()
     {
-        string settingsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? string.Empty, "appsettings.json");
-        if (!File.Exists(settingsPath)) return;
-        var json = File.ReadAllText(settingsPath);
-        var rootObject = JsonSerializer.Deserialize<SettingsRoot>(json);
-        if (rootObject == null) return;
-
-        // Properties
-        _sizeAndPosition = new RectInt32
+        try
         {
-            Height = rootObject.SizeY,
-            Width = rootObject.SizeX,
-            X = rootObject.PositionX,
-            Y = rootObject.PositionY
-        };
-        // Value validity checks
-        if (_sizeAndPosition.Height <= 600) { _sizeAndPosition.Height = 600; }
-        if (_sizeAndPosition.Width <= 600) { _sizeAndPosition.Width = 1000; }
-        if (_sizeAndPosition.X < 0) { _sizeAndPosition.X = 0; }
-        if (_sizeAndPosition.Y < 0) { _sizeAndPosition.Y = 0; }
-        
-        _closeOnApply = rootObject.CloseOnApply;
-        _queueFolders = rootObject.QueueFolders;
-        _favoriteFolders = rootObject.FavoriteFolders;
+            string settingsPath =
+                Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(),
+                    "appsettings.json");
+            if (!File.Exists(settingsPath)) return;
+            var json = File.ReadAllText(settingsPath);
+            var rootObject = JsonSerializer.Deserialize<SettingsRoot>(json);
+            if (rootObject == null) return;
+
+            // Properties
+            _sizeAndPosition = new RectInt32
+            {
+                Height = rootObject.SizeY,
+                Width = rootObject.SizeX,
+                X = rootObject.PositionX,
+                Y = rootObject.PositionY
+            };
+            // Value validity checks
+            if (_sizeAndPosition.Height <= 600)
+            {
+                _sizeAndPosition.Height = 600;
+            }
+
+            if (_sizeAndPosition.Width <= 600)
+            {
+                _sizeAndPosition.Width = 1000;
+            }
+
+            if (_sizeAndPosition.X < 0)
+            {
+                _sizeAndPosition.X = 0;
+            }
+
+            if (_sizeAndPosition.Y < 0)
+            {
+                _sizeAndPosition.Y = 0;
+            }
+
+            _closeOnApply = rootObject.CloseOnApply;
+            _queueFolders = rootObject.QueueFolders;
+            _favoriteFolders = rootObject.FavoriteFolders;
+        } 
+        catch (Exception e)
+        {
+            ContentDialog errorDialog = new ContentDialog
+            {
+                Title = "Error: appsettings.json could either not be accessed or found. Settings will not be saved between sessions.",
+                Content = "Is this application placed in a system directory? \n\n" + e.Message,
+                CloseButtonText = "Close"
+            };
+            errorDialog.XamlRoot = MainGrid.XamlRoot;
+            errorDialog.ShowAsync().AsTask();
+        }
     }
 }
