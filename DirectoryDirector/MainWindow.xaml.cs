@@ -182,16 +182,38 @@ namespace DirectoryDirector
 
         private void RevertIcoFile()
         {
+            // If set, queue up all subfolders for folder icon change 
+            string[] tempFolderList = _folderList;
+            if (_settingsHandler.ApplyToSubfolders)
+            {
+                tempFolderList = tempFolderList.Concat(
+                    tempFolderList.SelectMany(folderPath => Directory.GetDirectories(folderPath, "*", SearchOption.AllDirectories))
+                ).ToArray();
+            }
+            
             // Repeat for all selected folders
-            foreach (string folderPath in _folderList)
+            foreach (string folderPath in tempFolderList)
             {
                 CleanIcoFiles(folderPath);
                 UpdateDesktopIni(folderPath, "");
                 
-                if (_settingsHandler.CloseOnApply)
+                // Queue mode
+                // Remove the folder from the list
+                if (_settingsHandler.QueueFolders)
                 {
-                    CloseApp();
+                    _folderList = _folderList.Where(folder => folder != folderPath).ToArray();
+                    UpdateSelectedFolders(_folderList);
+                    if (_settingsHandler.CloseOnApply && _folderList.Length == 0)
+                    {
+                        CloseApp();
+                    }
+                    return;
                 }
+            }
+            
+            if (_settingsHandler.CloseOnApply)
+            {
+                CloseApp();
             }
         }
 
