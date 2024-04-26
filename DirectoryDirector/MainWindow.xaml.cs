@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.Storage.Streams;
 using Windows.UI;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -17,6 +19,7 @@ using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Documents;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using Vanara.PInvoke;
 using WinRT.Interop;
 using FileAttributes = System.IO.FileAttributes;
@@ -26,8 +29,6 @@ namespace DirectoryDirector
 {
     public partial class MainWindow : Window
     {
-        // TODO: Next: Favorites, delete with context menu? Sorting of standard list 
-
         private string[] _folderList; // List of folders to apply the icon to
         private SettingsHandler _settingsHandler;
         
@@ -203,6 +204,7 @@ namespace DirectoryDirector
              string[] icoPaths = Directory.GetFiles(folderPath, "*.ico", SearchOption.TopDirectoryOnly);
             foreach (string icoPath in icoPaths)
             {
+                // Delete only files set by this software
                 if ((File.GetAttributes(icoPath) & FileAttributes.Hidden) != FileAttributes.Hidden) continue;
                 if (!Path.GetFileName(icoPath).StartsWith("DDirector - ")) continue;
                 try 
@@ -233,7 +235,7 @@ namespace DirectoryDirector
             var picker = new FileOpenPicker
             {
                 ViewMode = PickerViewMode.Thumbnail,
-                FileTypeFilter = { ".ico" }
+                FileTypeFilter = { ".ico", ".png" }
             };
 
             var hwnd = WindowNative.GetWindowHandle(this);
@@ -243,6 +245,12 @@ namespace DirectoryDirector
             // No file picked
             if (file == null) return;
             if (MainGrid.DataContext is not IcoData icoData) return;
+            
+            // If PNG, convert to ICO
+            if (file.FileType == ".png")
+            {
+                //ConvertPngToIco(file);
+            }
 
             // Check if the exact same file exists within CachedIcons already
             var cachedIconsFolder = await StorageFolder.GetFolderFromPathAsync(Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
@@ -260,6 +268,26 @@ namespace DirectoryDirector
                 var copiedFile = await file.CopyAsync(cachedIconsFolder, file.Name, NameCollisionOption.GenerateUniqueName);
                 icoData.AddCustomIco(copiedFile.Path);
                 CopyIcoFile(copiedFile.Path);
+            }
+        }
+
+        private void ConvertPngToIco(string imagePath)
+        {
+            // Get byte data from the PNG file located at imagePath
+            byte[] imageBytes = File.ReadAllBytes(imagePath);
+            // Convert the byte data to a BitmapImage
+            BitmapImage bitmapImage = new BitmapImage();
+            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+            {
+                stream.WriteAsync(imageBytes.AsBuffer()).AsTask().Wait();
+                stream.Seek(0);
+                bitmapImage.SetSource(stream);
+            }
+            // Save the BitmapImage to as a ICO file
+            string icoPath = Path.ChangeExtension(imagePath, ".ico");
+            using (FileStream fileStream = new FileStream(icoPath, FileMode.Create))
+            {
+                
             }
         }
 

@@ -89,6 +89,12 @@ public class SettingsHandler
             X = rootObject.PositionX,
             Y = rootObject.PositionY
         };
+        // Value validity checks
+        if (_sizeAndPosition.Height <= 600) { _sizeAndPosition.Height = 600; }
+        if (_sizeAndPosition.Width <= 600) { _sizeAndPosition.Width = 1000; }
+        if (_sizeAndPosition.X < 0) { _sizeAndPosition.X = 0; }
+        if (_sizeAndPosition.Y < 0) { _sizeAndPosition.Y = 0; }
+        
         _closeOnApply = rootObject.CloseOnApply;
         _queueFolders = rootObject.QueueFolders;
         _favoriteFolders = rootObject.FavoriteFolders;
