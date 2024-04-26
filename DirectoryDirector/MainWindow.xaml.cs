@@ -94,9 +94,6 @@ namespace DirectoryDirector
 
             // Format the title to display the base path and all selected folders
             string basePath = Path.GetDirectoryName(folderList[0]);
-            //string allNames = "";
-            //foreach (string folder in folderList)
-            //{ allNames += Path.GetFileName(folder) + ", "; }
 
             AppTitleTextBlock.Inlines.Clear();
             AppTitleTextBlock.Inlines.Add(new Run { Text = "Directory Director" });
@@ -245,11 +242,15 @@ namespace DirectoryDirector
             // No file picked
             if (file == null) return;
             if (MainGrid.DataContext is not IcoData icoData) return;
+
+            var tempFlag = false;
             
             // If PNG, convert to ICO
             if (file.FileType == ".png")
             {
-                //ConvertPngToIco(file);
+                tempFlag = true;
+                await PNGConverter.Convert(file.Path, file.Path.Replace(".png", ".ico"), 256, false);
+                file = await StorageFile.GetFileFromPathAsync(file.Path.Replace(".png", ".ico"));
             }
 
             // Check if the exact same file exists within CachedIcons already
@@ -269,28 +270,14 @@ namespace DirectoryDirector
                 icoData.AddCustomIco(copiedFile.Path);
                 CopyIcoFile(copiedFile.Path);
             }
-        }
-
-        private void ConvertPngToIco(string imagePath)
-        {
-            // Get byte data from the PNG file located at imagePath
-            byte[] imageBytes = File.ReadAllBytes(imagePath);
-            // Convert the byte data to a BitmapImage
-            BitmapImage bitmapImage = new BitmapImage();
-            using (InMemoryRandomAccessStream stream = new InMemoryRandomAccessStream())
+            
+            // Delete the temporary ICO file
+            if (tempFlag)
             {
-                stream.WriteAsync(imageBytes.AsBuffer()).AsTask().Wait();
-                stream.Seek(0);
-                bitmapImage.SetSource(stream);
-            }
-            // Save the BitmapImage to as a ICO file
-            string icoPath = Path.ChangeExtension(imagePath, ".ico");
-            using (FileStream fileStream = new FileStream(icoPath, FileMode.Create))
-            {
-                
+                await file.DeleteAsync();
             }
         }
-
+        
         // Check if an identical file already exists, no matter the name
         private async Task<StorageFile> FindExistingFileAsync(StorageFolder folder, string filePath)
         {
