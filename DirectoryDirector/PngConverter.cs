@@ -10,7 +10,7 @@ using Microsoft.UI.Xaml.Media.Imaging;
 
 namespace DirectoryDirector;
 
-public static class PNGConverter
+public static class PngConverter
 {
     // Based on the following WPF code: https://gist.github.com/darkfall/1656050?permalink_comment_id=4920979
     // Converted to support the WinUI 3.0 syntax and APIs

@@ -118,25 +118,10 @@ public class SettingsHandler
                 Y = rootObject.PositionY
             };
             // Value validity checks
-            if (_sizeAndPosition.Height <= 600)
-            {
-                _sizeAndPosition.Height = 600;
-            }
-
-            if (_sizeAndPosition.Width <= 600)
-            {
-                _sizeAndPosition.Width = 1000;
-            }
-
-            if (_sizeAndPosition.X < 0)
-            {
-                _sizeAndPosition.X = 0;
-            }
-
-            if (_sizeAndPosition.Y < 0)
-            {
-                _sizeAndPosition.Y = 0;
-            }
+            if (_sizeAndPosition.Height <= 600) { _sizeAndPosition.Height = 600; }
+            if (_sizeAndPosition.Width <= 600) { _sizeAndPosition.Width = 1000; }
+            if (_sizeAndPosition.X < 0) { _sizeAndPosition.X = 0; }
+            if (_sizeAndPosition.Y < 0) { _sizeAndPosition.Y = 0; }
 
             _closeOnApply = rootObject.CloseOnApply;
             _queueFolders = rootObject.QueueFolders;
@@ -148,9 +133,9 @@ public class SettingsHandler
             {
                 Title = "Error: appsettings.json could either not be accessed or found. Settings will not be saved between sessions.",
                 Content = "Is this application placed in a system directory? \n\n" + e.Message,
-                CloseButtonText = "Close"
+                CloseButtonText = "Close",
+                XamlRoot = MainGrid.XamlRoot
             };
-            errorDialog.XamlRoot = MainGrid.XamlRoot;
             errorDialog.ShowAsync().AsTask();
         }
     }

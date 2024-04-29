@@ -30,7 +30,7 @@ public class IcoData
         IcoDataList.Add(new[] { icoPath, Path.GetFileName(icoPath) });
     }
 
-    public void CreateIcoList()
+    private void CreateIcoList()
     {
         IcoDataList.Clear();
         
