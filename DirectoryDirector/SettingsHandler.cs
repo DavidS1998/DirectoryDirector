@@ -41,7 +41,7 @@ public class SettingsHandler
     }
     
     // Used for error messages
-    public Grid MainGrid { get; set; }
+    private Grid MainGrid { get; }
     
     public SettingsHandler(Grid grid)
     {

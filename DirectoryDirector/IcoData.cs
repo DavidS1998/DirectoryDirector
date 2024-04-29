@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,15 +13,15 @@ namespace DirectoryDirector;
 
 public class IcoData
 {
-    public ObservableCollection<string[]> IcoDataList { get; set; }
-    public ObservableCollection<string[]> FavoriteList { get; set; }
+    public SmartCollection<string[]> IcoDataList { get; set; }
+    public SmartCollection<string[]> FavoriteList { get; set; }
     
     // TODO: Handle case where CachedIcons folder does not exist
 
     public IcoData()
     {
-        IcoDataList = new ObservableCollection<string[]>();
-        FavoriteList = new ObservableCollection<string[]>();
+        IcoDataList = new SmartCollection<string[]>();
+        FavoriteList = new SmartCollection<string[]>();
         
         CreateIcoList();
     }
@@ -32,7 +34,7 @@ public class IcoData
 
     private void CreateIcoList()
     {
-        IcoDataList.Clear();
+        var tempCollection = new Collection<string[]>();
         
         // Find all .ico files in the CachedIcons folder, extract paths
         string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
@@ -40,16 +42,17 @@ public class IcoData
 
         // Create a list of icon data, each containing the path and name
         foreach (string icoPath in icoPaths)
-        { IcoDataList.Add(new[] { icoPath, Path.GetFileName(icoPath) }); }
-        
-        // Remove any entries also in the favorites list / Okay default behavior?
-        foreach (string[] favorite in FavoriteList)
         {
-            if (IcoDataList.Any(x => x[0] == favorite[0]))
+            string fileName = Path.GetFileName(icoPath);
+            // Only add non-favorited icons to this list
+            if (FavoriteList.All(favorite => favorite[0] != icoPath))
             {
-                IcoDataList.Remove(IcoDataList.First(x => x[0] == favorite[0]));
+                tempCollection.Add(new[] { icoPath, fileName });
             }
         }
+        // Done to prevent a flood of NotifyCollectionChanged events
+        IcoDataList.Clear();
+        IcoDataList.AddRange(tempCollection);
     }
     
     public void UpdateFavorites(List<string> cachedIconName)
@@ -67,7 +70,7 @@ public class IcoData
             FavoriteList.Add(new[] { basePath + "\\" + icoPath, Path.GetFileName(icoPath) });
         }
         
-        // Refresh main list to remove duplicates
+        // Refresh main list to remove duplicates across both lists
         CreateIcoList();
     }
 }
