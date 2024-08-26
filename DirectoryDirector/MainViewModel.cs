@@ -285,6 +285,12 @@ public class MainViewModel
         return null;
     }
     
+    public bool IsLatestVersion()
+    {
+        // Check for updates
+        return true;
+    }
+    
     // Close application
     private void CloseApp()
     {

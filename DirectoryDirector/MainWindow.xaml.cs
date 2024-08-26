@@ -58,8 +58,8 @@ public partial class MainWindow : Window
             SubfoldersButton.IsEnabled = true;
         }
         
-        //if (MainGrid.DataContext is not IcoData icoData) return;
-        //icoData.UpdateFavorites(_mainViewModel.SettingsHandler.FavoriteFolders);
+        // Check for updates
+        DownloadButton.Visibility = _mainViewModel.IsLatestVersion() ? Visibility.Collapsed : Visibility.Visible;
     }
     
     // Decides what to do when a folder button is clicked
@@ -227,5 +227,12 @@ public partial class MainWindow : Window
         string cachedIconsPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
                                               ?? throw new InvalidOperationException(), "CachedIcons");
         Process.Start("explorer.exe", cachedIconsPath);
+    }    
+    
+    // Open the CachedIcons folder in the File Explorer
+    private void ReleasesLinkButton_OnClick(object sender, RoutedEventArgs e)
+    {
+        // Open www.google.com in the default browser
+        Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/DavidS1998/DirectoryDirector/releases"));
     }
 }

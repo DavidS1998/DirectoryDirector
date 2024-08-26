@@ -28,14 +28,16 @@
         
         <!--Info bar-->
         <Grid Row="1" Height="48" VerticalAlignment="Top" Background="Transparent" Name="InfoBar">
-            
+            <CommandBar HorizontalAlignment="Left" Background="Transparent" DefaultLabelPosition="Right">
+                <AppBarButton Icon="Download" Label="New version available" IsEnabled="True" Name="DownloadButton" Foreground="CornflowerBlue" Click="ReleasesLinkButton_OnClick"/>
+            </CommandBar>
             <CommandBar HorizontalAlignment="Center" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right">
                 <AppBarButton Icon="Accept" Label="Close after applying icon" IsEnabled="True" Name="CloseApplyButton" Click="CloseApplyButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Apply icon to all subfolders" IsEnabled="True" Name="SubfoldersButton" Click="SubfoldersButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Queue up folders" IsEnabled="True" Name="QueueButton" Click="QueueButton_OnClickButton_OnClick"/>
             </CommandBar>
             <CommandBar HorizontalAlignment="Right" Background="Transparent" DefaultLabelPosition="Right">
-                <AppBarButton Icon="Pictures" Label="Open icon folder" IsEnabled="True" Name="OpenFolderButton" Click="OpenFolderButton_OnClick"/>
+                <AppBarButton Icon="Pictures" Label="Open icon folder" IsEnabled="True" Click="OpenFolderButton_OnClick"/>
             </CommandBar>
         </Grid>
         
@@ -62,6 +64,8 @@
                                         HorizontalAlignment="Left"
                                         Background="Black" CornerRadius="8"
                                         ToolTipService.ToolTip="{Binding [1]}"
+                                        TabFocusNavigation="Local"
+                                        IsTabStop="True"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
                                         RightTapped="FolderButton_OnRightTapped"
                                         PointerEntered="StackPanel_PointerEntered"
@@ -88,6 +92,8 @@
                             <StackPanel Height="170" Width="150" Margin="5"
                                         Background="Black" CornerRadius="8"
                                         ToolTipService.ToolTip="{Binding [1]}"
+                                        TabFocusNavigation="Local"
+                                        IsTabStop="True"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
                                         RightTapped="FolderButton_OnRightTapped"
                                         PointerEntered="StackPanel_PointerEntered"
