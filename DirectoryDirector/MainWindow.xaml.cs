@@ -13,6 +13,7 @@ using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
+using Microsoft.UI.Xaml.Media.Imaging;
 using WinRT.Interop;
 using Path = System.IO.Path;    
 
@@ -68,7 +69,7 @@ public partial class MainWindow : Window
     }
     
     // Decides what to do when a folder button is clicked
-    private void GridClickHandler(string clickedTile)
+    private void GridClickHandler(string clickedTile, string folderName = "")
     {
         switch (clickedTile)
         {
@@ -80,50 +81,77 @@ public partial class MainWindow : Window
                 break;
             default:
             {
-                string path = clickedTile;
-                path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
-                                    ?? throw new InvalidOperationException(), "CachedIcons", path);
+                // If folderName is empty, it indicates it's from the default folder (root)
+                string path;
+                if (string.IsNullOrEmpty(folderName))
+                {
+                    path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                        ?? throw new InvalidOperationException(), "CachedIcons", clickedTile);
+                }
+                else
+                {
+                    // Construct the path including the folder name/subfolder
+                    path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                        ?? throw new InvalidOperationException(), "CachedIcons", folderName, clickedTile);
+                }
+            
                 _mainViewModel.CopyIcoFile(path, AppTitleTextBlock);
                 break;
             }
         }
     }
-
+    
+    
+    
     // Handle the click event for the custom folder buttons
     private void FolderButton_OnMouseLeftButtonDown(object sender, RoutedEventArgs e)
     {
         // Find which icon was clicked
         StackPanel stackPanel = (StackPanel)sender;
-        TextBlock textBlock = (TextBlock)stackPanel.Children[1];
-        string clickedTile = textBlock.Text;
+        IconItem clickedIcon = (IconItem)stackPanel.DataContext;
+        string clickedTile = clickedIcon.IconName;
+        string folderName = clickedIcon.FolderName == "Default" ? "." : clickedIcon.FolderName;
         
-        GridClickHandler(clickedTile);
+        GridClickHandler(clickedTile, folderName);
     }
+
     
     // Handle favoriting icons on right click
     private void FolderButton_OnRightTapped(object sender, RightTappedRoutedEventArgs e)
     {
         // Find which icon was clicked
-        StackPanel stackPanel = (StackPanel)sender;
-        TextBlock textBlock = (TextBlock)stackPanel.Children[1];
-        string clickedTile = textBlock.Text;
         if (MainGrid.DataContext is not IcoData icoData) return;
-        if (clickedTile == "Select…" || clickedTile == "Revert") return;
-        
-        // Add to favorites if it doesn't exist, remove if it does
-        if (_mainViewModel.SettingsHandler.FavoriteFolders.Contains(clickedTile))
+
+        StackPanel stackPanel = (StackPanel)sender;
+        Image image = stackPanel.Children[0] as Image;
+        TextBlock textBlock = stackPanel.Children[1] as TextBlock;
+
+        string clickedTile = textBlock?.Text ?? "";
+        string? fullIconPath = (image?.Source as BitmapImage)?.UriSource?.LocalPath;
+
+        if (string.IsNullOrEmpty(fullIconPath) || clickedTile is "Select…" or "Revert")
+            return;
+
+        // Get relative path from CachedIcons
+        string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? "", "CachedIcons");
+        string relativePath = Path.GetRelativePath(basePath, fullIconPath);
+
+        // Toggle favorite
+        var favorites = _mainViewModel.SettingsHandler.FavoriteFolders;
+        if (favorites.Contains(relativePath))
         {
-            Debug.WriteLine("Removing " + clickedTile);
-            _mainViewModel.SettingsHandler.FavoriteFolders = _mainViewModel.SettingsHandler.FavoriteFolders.Where(folder => folder != clickedTile).ToList();
-            icoData.UpdateFavorites(_mainViewModel.SettingsHandler.FavoriteFolders);
+            Debug.WriteLine("Removing " + relativePath);
+            _mainViewModel.SettingsHandler.FavoriteFolders = favorites.Where(f => f != relativePath).ToList();
         }
         else
         {
-            Debug.WriteLine("Adding " + clickedTile);
-            _mainViewModel.SettingsHandler.FavoriteFolders = _mainViewModel.SettingsHandler.FavoriteFolders.Append(clickedTile).ToList();
-            icoData.UpdateFavorites(_mainViewModel.SettingsHandler.FavoriteFolders);
+            Debug.WriteLine("Adding " + relativePath);
+            _mainViewModel.SettingsHandler.FavoriteFolders = favorites.Append(relativePath).ToList();
         }
+
+        icoData.UpdateFavorites(_mainViewModel.SettingsHandler.FavoriteFolders);
     }
+
     
     // Hover enter animation
     private void StackPanel_PointerEntered(object sender, PointerRoutedEventArgs e)

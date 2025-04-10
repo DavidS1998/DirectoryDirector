@@ -57,16 +57,16 @@
                         <DataTemplate>
                             <StackPanel Height="170" Width="150" Margin="5"
                                         Background="Black" CornerRadius="8"
-                                        ToolTipService.ToolTip="{Binding [1]}"
+                                        ToolTipService.ToolTip="{Binding IconName}"
                                         Tapped="FolderButton_OnMouseLeftButtonDown"
                                         RightTapped="FolderButton_OnRightTapped"
                                         PointerEntered="StackPanel_PointerEntered"
                                         PointerExited="StackPanel_PointerExited"
                                         TabFocusNavigation="Local"
                                         IsTabStop="True"
-                                        AutomationProperties.Name="{Binding [1]}">
-                                <Image Source="{Binding [0]}" Margin="4 0 4 0" />
-                                <TextBlock Text="{Binding [1]}" HorizontalAlignment="Center" Foreground="White" TextWrapping="NoWrap" />
+                                        AutomationProperties.Name="{Binding IconName}">
+                                <Image Source="{Binding IconPath}" Margin="4 0 4 0" />
+                                <TextBlock Text="{Binding IconName}" HorizontalAlignment="Center" Foreground="White" TextWrapping="NoWrap" />
                             </StackPanel>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
@@ -98,16 +98,16 @@
                                         <DataTemplate>
                                             <StackPanel Height="170" Width="150" Margin="5"
                                                         Background="Black" CornerRadius="8"
-                                                        ToolTipService.ToolTip="{Binding [1]}"
+                                                        ToolTipService.ToolTip="{Binding IconName}"
                                                         Tapped="FolderButton_OnMouseLeftButtonDown"
                                                         RightTapped="FolderButton_OnRightTapped"
                                                         PointerEntered="StackPanel_PointerEntered"
                                                         PointerExited="StackPanel_PointerExited"
                                                         TabFocusNavigation="Local"
                                                         IsTabStop="True"
-                                                        AutomationProperties.Name="{Binding [1]}">
-                                                <Image Source="{Binding [0]}" Margin="4 0 4 0" />
-                                                <TextBlock Text="{Binding [1]}" 
+                                                        AutomationProperties.Name="{Binding IconName}">
+                                                <Image Source="{Binding IconPath}" Margin="4 0 4 0" />
+                                                <TextBlock Text="{Binding IconName}" 
                                                            HorizontalAlignment="Center" 
                                                            Foreground="White" 
                                                            Margin="0 0 0 0" 
