@@ -38,7 +38,7 @@ public class IcoData
         
         // Find all .ico files in the CachedIcons folder, extract paths
         string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException(), "CachedIcons");
-        string[] icoPaths = Directory.GetFiles(basePath, "*.ico");
+        string[] icoPaths = Directory.GetFiles(basePath, "*.ico", SearchOption.AllDirectories);
 
         // Create a list of icon data, each containing the path and name
         foreach (string icoPath in icoPaths)
