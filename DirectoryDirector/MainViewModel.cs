@@ -20,7 +20,7 @@ namespace DirectoryDirector;
 
 public class MainViewModel
 {
-    private const string Version = "v1.2";
+    private const string Version = "v1.3";
 
     private string[] _folderList; // List of folders to apply the icon to
     private readonly SettingsHandler _settingsHandler;

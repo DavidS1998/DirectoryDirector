@@ -6,6 +6,7 @@ using System.Reflection;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
 using Windows.UI;
+using Windows.UI.Popups;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
@@ -20,15 +21,19 @@ namespace DirectoryDirector;
 public partial class MainWindow : Window
 {
     private MainViewModel _mainViewModel;
-    
+
     // Initiated from context menu
     public MainWindow(string[] folderList)
     {
         // Initialization
         InitializeComponent();
-        _mainViewModel = new MainViewModel(folderList, MainGrid, MainGrid.DataContext as IcoData);
-        _mainViewModel.UpdateFolderSelection(folderList, AppTitleTextBlock);
         
+        var icoData = new IcoData();
+        MainGrid.DataContext = icoData;
+
+        _mainViewModel = new MainViewModel(folderList, MainGrid, icoData);
+        _mainViewModel.UpdateFolderSelection(folderList, AppTitleTextBlock);
+
         // Set app icon
         IntPtr hWnd = WindowNative.GetWindowHandle(this);
         WindowId myWndId = Win32Interop.GetWindowIdFromWindow(hWnd);
