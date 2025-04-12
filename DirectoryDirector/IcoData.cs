@@ -32,6 +32,7 @@ public class IcoData : INotifyPropertyChanged
 {
     public SmartCollection<IcoGroup> IcoDataList { get; set; }
     public SmartCollection<IconItem> FavoriteList { get; set; }
+    private List<IcoGroup> _allGroups = new();
     
     // Resize handling
     public event PropertyChangedEventHandler PropertyChanged;
@@ -61,6 +62,9 @@ public class IcoData : INotifyPropertyChanged
         FavoriteList = new SmartCollection<IconItem>();
         
         CreateIcoList();
+        
+        IcoDataList.Clear();
+        IcoDataList.AddRange(_allGroups);
     }
     
     public void AddCustomIco(string icoPath)
@@ -85,13 +89,12 @@ public class IcoData : INotifyPropertyChanged
         group.Icons.Add(new IconItem(defaultGroupName, icoPath, Path.GetFileName(icoPath)));
     }
     
-    private void CreateIcoList()
+    public void CreateIcoList()
     {
-        var groupedIcons = new SmartCollection<IcoGroup>();
+        var groupedIcons = new List<IcoGroup>();
 
-        string basePath = Path.Combine(
-            Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
-            ?? throw new InvalidOperationException(), "CachedIcons");
+        string basePath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) 
+                                       ?? throw new InvalidOperationException(), "CachedIcons");
         if (!Directory.Exists(basePath)) return;
 
         var subFolders = Directory.GetDirectories(basePath, "*", SearchOption.AllDirectories).Prepend(basePath);
@@ -99,16 +102,15 @@ public class IcoData : INotifyPropertyChanged
         foreach (string folder in subFolders)
         {
             var icons = new ObservableCollection<IconItem>();
-
             string relativeFolderName = Path.GetRelativePath(basePath, folder);
             string folderDisplayName = relativeFolderName == "." ? "Default" : relativeFolderName;
 
             foreach (string icoPath in Directory.GetFiles(folder, "*.ico"))
             {
-                // Skip if it's already in favorites
+                // Skip if already in favorite list
                 if (FavoriteList.All(fav => fav.IconPath != icoPath))
                 {
-                    icons.Add(new IconItem(folderDisplayName, icoPath, Path.GetFileName(icoPath)));
+                    icons.Add(new IconItem(folderDisplayName, icoPath, Path.GetFileNameWithoutExtension(icoPath)));
                 }
             }
 
@@ -116,14 +118,17 @@ public class IcoData : INotifyPropertyChanged
             {
                 groupedIcons.Add(new IcoGroup
                 {
-                    FolderName = folderDisplayName,
+                    FolderName = Path.GetRelativePath(basePath, folder) == "." ? "Default" : Path.GetRelativePath(basePath, folder),
                     Icons = icons
                 });
             }
         }
 
+        // ✅ Set the full list AFTER collecting all icons
+        _allGroups = groupedIcons;
+
         IcoDataList.Clear();
-        IcoDataList.AddRange(groupedIcons);
+        IcoDataList.AddRange(_allGroups);
     }
 
     
@@ -154,6 +159,54 @@ public class IcoData : INotifyPropertyChanged
 
         // Refresh main list to remove duplicates across both lists
         CreateIcoList();
+    }
+    
+    public void FilterIcoList(string query)
+    {
+        if (_allGroups == null) return;
+        
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            // Reset to the full list
+            IcoDataList.Clear();
+            IcoDataList.AddRange(_allGroups);
+            return;
+        }
+
+        var filtered = _allGroups
+            .Select(g => new IcoGroup
+            {
+                FolderName = g.FolderName,
+                Icons = new ObservableCollection<IconItem>(
+                    g.Icons.Where(icon =>
+                        IsSubsequence(query, icon.IconName) ||
+                        IsSubsequence(query, g.FolderName)
+                    ))
+            })
+            .Where(g => g.Icons.Any())
+            .ToList();
+
+
+        IcoDataList.Clear();
+        IcoDataList.AddRange(filtered);
+    }
+    
+    // Order subsequence match for friendler searching
+    private bool IsSubsequence(string query, string target)
+    {
+        int q = 0;
+        query = query.ToLower();
+        target = target.ToLower();
+
+        foreach (char c in target)
+        {
+            if (q < query.Length && query[q] == c)
+            {
+                q++;
+            }
+        }
+
+        return q == query.Length;
     }
 
 }

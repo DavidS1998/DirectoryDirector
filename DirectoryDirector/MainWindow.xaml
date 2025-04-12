@@ -7,7 +7,10 @@
         mc:Ignorable="d"
         Closed="MainWindow_OnClosed"
         Title="Change Folder Icon">
-    <Grid x:Name="MainGrid" Background="Black" DragOver="MainGrid_OnDragOver" Drop="MainGrid_OnDrop" AllowDrop="True">
+    <Grid x:Name="MainGrid" Background="Black" DragOver="MainGrid_OnDragOver" Drop="MainGrid_OnDrop" AllowDrop="True"
+          KeyDown="MainGrid_OnKeyDown"
+          IsTabStop="True"
+          PreviewKeyDown="MainGrid_OnKeyDown">
         <Grid.RowDefinitions>
             <RowDefinition Height="32"/>
             <RowDefinition Height="48"/>
@@ -28,13 +31,17 @@
             <CommandBar HorizontalAlignment="Left" Background="Transparent" DefaultLabelPosition="Right">
                 <AppBarButton Icon="Download" Label="New version available" IsEnabled="True" Name="DownloadButton" Foreground="CornflowerBlue" Click="ReleasesLinkButton_OnClick"/>
             </CommandBar>
-            <TextBox PlaceholderText="Search..." PlaceholderForeground="White" HorizontalAlignment="Left" Width="250" Foreground="White" Background="Black" Height="32" Margin="32 -6 0 0"/>
+            <TextBox PlaceholderText="Type to filter..." 
+                     Name="SearchBox"
+                     PlaceholderForeground="White" 
+                     TextChanged="SearchBox_OnTextChanged"
+                     HorizontalAlignment="Left" Width="250" Foreground="White" Background="Black" Height="32" Margin="32 -6 0 0"/>
             <CommandBar HorizontalAlignment="Center" Background="Transparent" IsOpen="False" DefaultLabelPosition="Right">
                 <AppBarButton Icon="Accept" Label="Close after applying icon" IsEnabled="True" Name="CloseApplyButton" Click="CloseApplyButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Apply icon to all subfolders" IsEnabled="True" Name="SubfoldersButton" Click="SubfoldersButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Queue up folders" IsEnabled="True" Name="QueueButton" Click="QueueButton_OnClickButton_OnClick"/>
             </CommandBar>
-            <Slider Name="SizeSlider" SnapsTo="StepValues" TickFrequency="50" Minimum="50" Maximum="300" StepFrequency="50" 
+            <Slider Name="SizeSlider" SnapsTo="StepValues" TickFrequency="50" Minimum="50" Maximum="300" StepFrequency="25" 
                     ValueChanged="SizeSlider_OnValueChanged" 
                     TickPlacement="TopLeft" Width="150" HorizontalAlignment="Right" 
                     Height="44" Margin="0 6 150 0"

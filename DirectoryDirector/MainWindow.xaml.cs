@@ -5,7 +5,9 @@ using System.Linq;
 using System.Reflection;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Graphics;
+using Windows.System;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Microsoft.UI;
 using Microsoft.UI.Windowing;
@@ -272,12 +274,41 @@ public partial class MainWindow : Window
         Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/DavidS1998/DirectoryDirector/releases"));
     }
 
+    // Resize icons
     private void SizeSlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
     {
-        if (MainGrid.DataContext is IcoData data)
-        {
-            data.IconWidth = e.NewValue;
-        }
+        if (MainGrid.DataContext is not IcoData data) return;
+        data.IconWidth = e.NewValue;
+    }
 
+    // Filter icons
+    private void SearchBox_OnTextChanged(object sender, TextChangedEventArgs e)
+    {
+        if (_icoData == null) return;
+
+        string query = SearchBox.Text.Trim().ToLowerInvariant();
+        _icoData.FilterIcoList(query);
+    }
+
+    // Any typed characters will automatically go into the search box
+    private void MainGrid_OnKeyDown(object sender, KeyRoutedEventArgs e)
+    {
+        // Ignore key events if already focused or not a character key
+        if (SearchBox.FocusState == FocusState.Keyboard)
+            return;
+
+        // Filter: Only redirect letter, digit, and symbol keys
+        var key = e.Key;
+
+        // Ignore navigation/control keys
+        if (key == VirtualKey.Tab || key == VirtualKey.Space ||
+            key == VirtualKey.Left || key == VirtualKey.Right ||
+            key == VirtualKey.Up || key == VirtualKey.Down ||
+            key == VirtualKey.Shift || key == VirtualKey.Control ||
+            key == VirtualKey.Escape || key == VirtualKey.Enter)
+            return;
+        
+        // If it's a valid text entry key, set focus to the search box
+        SearchBox.Focus(FocusState.Keyboard);
     }
 }
