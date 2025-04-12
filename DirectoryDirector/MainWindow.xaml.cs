@@ -100,7 +100,7 @@ public partial class MainWindow : Window
                                         ?? throw new InvalidOperationException(), "CachedIcons", folderName, clickedTile);
                 }
             
-                _mainViewModel.CopyIcoFile(path, AppTitleTextBlock);
+                _mainViewModel.CopyIcoFile(path + ".ico", AppTitleTextBlock);
                 break;
             }
         }

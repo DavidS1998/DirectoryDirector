@@ -41,7 +41,7 @@
                 <AppBarButton Icon="Cancel" Label="Apply icon to all subfolders" IsEnabled="True" Name="SubfoldersButton" Click="SubfoldersButton_OnClick"/>
                 <AppBarButton Icon="Cancel" Label="Queue up folders" IsEnabled="True" Name="QueueButton" Click="QueueButton_OnClickButton_OnClick"/>
             </CommandBar>
-            <Slider Name="SizeSlider" SnapsTo="StepValues" TickFrequency="50" Minimum="50" Maximum="300" StepFrequency="25" 
+            <Slider Name="SizeSlider" SnapsTo="StepValues" TickFrequency="25" Minimum="50" Maximum="300" StepFrequency="25" 
                     ValueChanged="SizeSlider_OnValueChanged" 
                     TickPlacement="TopLeft" Width="150" HorizontalAlignment="Right" 
                     Height="44" Margin="0 6 150 0"

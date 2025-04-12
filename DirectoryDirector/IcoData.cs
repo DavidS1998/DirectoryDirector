@@ -86,7 +86,7 @@ public class IcoData : INotifyPropertyChanged
         }
 
         // Add the new icon to the default group
-        group.Icons.Add(new IconItem(defaultGroupName, icoPath, Path.GetFileName(icoPath)));
+        group.Icons.Add(new IconItem(defaultGroupName, icoPath, Path.GetFileNameWithoutExtension(icoPath)));
     }
     
     public void CreateIcoList()
@@ -152,7 +152,7 @@ public class IcoData : INotifyPropertyChanged
 
             string folderName = Path.GetDirectoryName(icoPath)?.Replace("\\", "/") ?? "";
             string groupName = string.IsNullOrEmpty(folderName) ? "Default" : folderName;
-            string displayName = Path.GetFileName(icoPath);
+            string displayName = Path.GetFileName(Path.GetFileNameWithoutExtension(icoPath));
 
             FavoriteList.Add(new IconItem(groupName, fullPath, displayName));
         }
