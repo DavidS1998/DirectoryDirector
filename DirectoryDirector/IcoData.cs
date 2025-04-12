@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -27,10 +28,30 @@ public class IconItem
     }
 }
 
-public class IcoData
+public class IcoData : INotifyPropertyChanged
 {
     public SmartCollection<IcoGroup> IcoDataList { get; set; }
     public SmartCollection<IconItem> FavoriteList { get; set; }
+    
+    // Resize handling
+    public event PropertyChangedEventHandler PropertyChanged;
+    protected void OnPropertyChanged(string propertyName)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+    
+    private double _iconWidth = 150;
+    public double IconWidth
+    {
+        get => _iconWidth;
+        set
+        {
+            _iconWidth = value;
+            OnPropertyChanged(nameof(IconWidth));
+            OnPropertyChanged(nameof(IconHeight));
+        }
+    }
+    public double IconHeight => IconWidth / 15.0 * 17.0;
     
     // TODO: Handle case where CachedIcons folder does not exist
 

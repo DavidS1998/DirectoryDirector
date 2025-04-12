@@ -11,6 +11,7 @@ using Microsoft.UI;
 using Microsoft.UI.Windowing;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
+using Microsoft.UI.Xaml.Controls.Primitives;
 using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Media.Imaging;
@@ -22,6 +23,7 @@ namespace DirectoryDirector;
 public partial class MainWindow : Window
 {
     private MainViewModel _mainViewModel;
+    private IcoData _icoData;
 
     // Initiated from context menu
     public MainWindow(string[] folderList)
@@ -30,7 +32,8 @@ public partial class MainWindow : Window
         InitializeComponent();
         
         var icoData = new IcoData();
-        MainGrid.DataContext = icoData;
+        _icoData = icoData;
+        MainGrid.DataContext = _icoData;
 
         _mainViewModel = new MainViewModel(folderList, MainGrid, icoData);
         _mainViewModel.UpdateFolderSelection(folderList, AppTitleTextBlock);
@@ -267,5 +270,14 @@ public partial class MainWindow : Window
     {
         // Open www.google.com in the default browser
         Windows.System.Launcher.LaunchUriAsync(new Uri("https://github.com/DavidS1998/DirectoryDirector/releases"));
+    }
+
+    private void SizeSlider_OnValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+    {
+        if (MainGrid.DataContext is IcoData data)
+        {
+            data.IconWidth = e.NewValue;
+        }
+
     }
 }
